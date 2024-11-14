@@ -5,14 +5,14 @@ module.exports = {
   theme: {
     extend: {
       colors:{
-        darkGreen:"#002417",
+        purple:"#8b5cf6",
         orange:"#FF4500",
         fernGreen: "#0E4516",
         white:"#FFFFFF",
         
         primary: "#161622",
         secondary: {
-          DEFAULT: "#FF9C01",
+          DEFAULT: "#FFA800",
           100: "#FF9001",
           200: "#FF8E01",
         },
