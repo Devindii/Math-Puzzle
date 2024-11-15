@@ -57,10 +57,21 @@ const Menu = ({ onClose }) => {
         <Image source={images.BtnInstructions} style={{ width: 300, height: 75 }} />
       </TouchableOpacity>
 
+      {/* LeaderBoard Button */}
+      <TouchableOpacity
+        onPress={() => {
+          router.push("/leaderboard");
+          onClose();
+        }}
+        style={{ position: "absolute", top: 600, left: 50 }}
+      >
+        <Image source={images.BtnLeader} style={{ width: 300, height: 75 }} />
+      </TouchableOpacity>
+
       {/* Exit Button */}
       <TouchableOpacity
         onPress={onClose} // Hides the menu when pressed
-        style={{ position: "absolute", top: 600, left: 50 }}
+        style={{ position: "absolute", top: 700, left: 50}}
       >
         <Image source={images.BtnExit} style={{ width: 300, height: 75 }} />
       </TouchableOpacity>

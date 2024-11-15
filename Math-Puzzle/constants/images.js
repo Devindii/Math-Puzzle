@@ -16,4 +16,11 @@ import BtnAchivements from "../assets/images/BtnAchivements.png";
 import BtnExit from "../assets/images/BtnExit.png";  
 import LogoNew from "../assets/images/LogoNew.png";  
 import Instruction from "../assets/images/Instruction.png"; 
-export default { bubble, splash, icon, favicon, Login, BgHome, btnEasy, btnHard, btnNormal, MenuScreen, BtnHome, BtnProfile, BtnInstructions, BtnAchivements,BtnExit, LogoNew, BackButton, Instruction};
+import BtnLeader from "../assets/images/BtnLeader.png";
+import LeaderBoard from "../assets/images/LeaderBoard.png";
+
+export default { bubble, splash, icon, favicon, Login, BgHome, btnEasy, btnHard, btnNormal, LeaderBoard,
+    MenuScreen, BtnHome, BtnProfile, BtnInstructions, BtnAchivements,BtnExit, LogoNew, BackButton, Instruction, 
+    BtnLeader, 
+
+};
