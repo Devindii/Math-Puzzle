@@ -12,7 +12,7 @@ const Index = () => {
   // if (!loading && isLogged) return <Redirect href="/home" />;
 
   return (
-    <SafeAreaView className="bg-darkGreen h-full">
+    <SafeAreaView className="bg-purple h-full">
       {/* <Loader isLoading={loading} /> */}
 
       <ScrollView
@@ -22,37 +22,29 @@ const Index = () => {
       >
         <View className="w-full flex justify-center items-center h-full px-4">
           <Image
-            source={images.logo}
-            className="w-[200px] h-[84px]"
+            source={images.LogoNew}
+            className="w-[1000px] h-[220px]"
             resizeMode="contain"
           />
 
-          <Image
-            source={images.cards}
-            className="max-w-[300px] w-full h-[350px]"
-            resizeMode="contain"
-          />
-
+        
           <View className="relative mt-5">
-            <Text className="text-3xl text-white font-bold text-center">
-              Unlock Your Math Skills{"\n"}
-              with the Power of{" "}
-              <Text className="text-secondary-200">Banana</Text>
+            <Text className="text-2xl mt-10 mb-5 text-white font-pregular text-center">
+            Welcome to the Math Mind Lab {"\n"}
+            Ready to solve some puzzles?{" "}
+        
             </Text>
           </View>
 
-          <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-          Score big, rise to the top, and claim your spot on the Banana Leaderboard!
-          </Text>
           <CustomButton
-            title="Continue with Email"
+            title="Get Start!"
             handlePress={() => router.push("/(auth)/sign-in")}
             containerStyles="w-full mt-7"
           />
         </View>
       </ScrollView>
 
-      <StatusBar backgroundColor="#161622" style="light" />
+      <StatusBar backgroundColor="purple" style="light" />
     </SafeAreaView>
   )
 }

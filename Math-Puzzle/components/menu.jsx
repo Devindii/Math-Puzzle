@@ -19,9 +19,9 @@ const Menu = ({ onClose }) => {
           router.push("/home");
           onClose();
         }}
-        style={{ position: "absolute", top: 150, left: 100 }}
+        style={{ position: "absolute", top: 200, left: 50 }}
       >
-        <Image source={images.BtnHome} style={{ width: 150, height: 50 }} />
+        <Image source={images.BtnHome} style={{ width: 300, height: 75 }} />
       </TouchableOpacity>
 
       {/* Profile Button */}
@@ -30,9 +30,9 @@ const Menu = ({ onClose }) => {
           router.push("/profile");
           onClose();
         }}
-        style={{ position: "absolute", top: 220, left: 100 }}
+        style={{ position: "absolute", top: 300, left: 50 }}
       >
-        <Image source={images.BtnProfile} style={{ width: 150, height: 50 }} />
+        <Image source={images.BtnProfile} style={{ width: 300, height: 75 }} />
       </TouchableOpacity>
 
       {/* Achievements Button */}
@@ -41,9 +41,9 @@ const Menu = ({ onClose }) => {
           router.push("/achievements");
           onClose();
         }}
-        style={{ position: "absolute", top: 290, left: 100 }}
+        style={{ position: "absolute", top: 400, left: 50 }}
       >
-        <Image source={images.BtnAchievements} style={{ width: 150, height: 50 }} />
+        <Image source={images.BtnAchivements} style={{ width: 300, height: 75 }} />
       </TouchableOpacity>
 
       {/* Instructions Button */}
@@ -52,17 +52,17 @@ const Menu = ({ onClose }) => {
           router.push("/instructions");
           onClose();
         }}
-        style={{ position: "absolute", top: 360, left: 100 }}
+        style={{ position: "absolute", top: 500, left: 50 }}
       >
-        <Image source={images.BtnInstructions} style={{ width: 150, height: 50 }} />
+        <Image source={images.BtnInstructions} style={{ width: 300, height: 75 }} />
       </TouchableOpacity>
 
       {/* Exit Button */}
       <TouchableOpacity
-        //onPress={onClose}
-        style={{ position: "absolute", top: 430, left: 100 }}
+        onPress={onClose} // Hides the menu when pressed
+        style={{ position: "absolute", top: 600, left: 50 }}
       >
-        <Image source={images.BtnExit} style={{ width: 150, height: 50 }} />
+        <Image source={images.BtnExit} style={{ width: 300, height: 75 }} />
       </TouchableOpacity>
     </ImageBackground>
   );

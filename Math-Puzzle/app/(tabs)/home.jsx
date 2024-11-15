@@ -18,7 +18,6 @@ const Home = () => {
     <SafeAreaView className="bg-purple h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
         <View className="w-full flex justify-center items-center h-full px-4">
-
           <BgHome />
 
           <Button
@@ -58,8 +57,8 @@ const Home = () => {
             source={icons.menu}
             style={{
               position: "absolute",
-              top: 30,
-              left: 30,
+              top: 60,
+              left: 20,
               width: 60,
               height: 60,
             }}
