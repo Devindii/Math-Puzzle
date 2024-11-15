@@ -1,17 +1,15 @@
 import {Stack } from "expo-router";
-import { View, Text, Image } from 'react-native'
-import { Tabs } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 
-import  icons  from "../../constants/icons";
 // import { Loader } from "../../components";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 
 const TabsLayout = () => {
   return (
     <Stack>
         <Stack.Screen name="home" options={{ headerShown: false }} />
+        <Stack.Screen name="instructions" options={{ headerShown: false }} />
+        <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="achievements" options={{ headerShown: false }} />
    
     </Stack>
   )

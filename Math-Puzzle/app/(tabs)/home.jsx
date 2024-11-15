@@ -1,23 +1,23 @@
 import { StatusBar } from "expo-status-bar";
-import { View, Image, ScrollView, Text, TouchableOpacity, Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, ScrollView, SafeAreaView } from "react-native";
+import { useState } from "react";
 import Button from "../../components/Button";
 import images from "../../constants/images";
-
-//import { router } from "expo-router";
-
-
+import icons from "../../constants/icons";
 import BgHome from "../../components/BgHome";
-
-
+import Menu from "../../components/menu";
 
 const Home = () => {
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
   return (
     <SafeAreaView className="bg-purple h-full">
-      <ScrollView contentContainerStyle={{ height: "100%" }} >
+      <ScrollView contentContainerStyle={{ height: "100%" }}>
         <View className="w-full flex justify-center items-center h-full px-4">
-
-
 
           <BgHome />
 
@@ -26,11 +26,10 @@ const Home = () => {
             style={{
               position: "absolute",
               top: 300,
-              left: 10,
-              width: 350,
-              height: 100,
+              left: 50,
+              width: 285,
+              height: 90,
             }}
-          //onPress={() => router.push("/(game)/leader-board")}
           />
 
           <Button
@@ -38,25 +37,36 @@ const Home = () => {
             style={{
               position: "absolute",
               top: 420,
-              left: 10,
-              width: 365,
-              height: 100,
+              left: 50,
+              width: 285,
+              height: 90,
             }}
-          //onPress={() => router.push("/(game)/leader-board")}
           />
 
           <Button
             source={images.btnHard}
             style={{
               position: "absolute",
-              top: 550,
-              left: 10,
-              width: 365,
-              height: 100,
+              top: 540,
+              left: 50,
+              width: 285,
+              height: 90,
             }}
-          //onPress={() => router.push("/(game)/leader-board")}
           />
 
+          <Button
+            source={icons.menu}
+            style={{
+              position: "absolute",
+              top: 30,
+              left: 30,
+              width: 60,
+              height: 60,
+            }}
+            onPress={toggleMenu}
+          />
+
+          {menuVisible && <Menu onClose={toggleMenu} />}
         </View>
       </ScrollView>
 
