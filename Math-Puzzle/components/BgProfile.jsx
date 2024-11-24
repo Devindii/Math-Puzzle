@@ -2,17 +2,17 @@ import { Image, Dimensions } from "react-native";
 import images from "../constants/images";
 
 
-const BgLeader = () => (
+const BgProfile = () => (
   <Image
-    source={images.LeaderBoard}
+    source={images.Profile}
     style={{
-      width: 430,
+      width: 390,
       height: 900,
       marginTop: 0,
-      maxWidth: 430,
+      maxWidth: 550,
     }}
     resizeMode="contain"
   />
 );
 
-export default BgLeader;
+export default BgProfile;

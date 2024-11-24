@@ -2,17 +2,19 @@ import { Image, Dimensions } from "react-native";
 import images from "../constants/images";
 
 
-const BgLeader = () => (
+const BgEasy = () => (
   <Image
-    source={images.LeaderBoard}
+    source={images.Easy}
     style={{
-      width: 430,
+      width: 380,
       height: 900,
       marginTop: 0,
-      maxWidth: 430,
+      maxWidth: 550,
     }}
     resizeMode="contain"
   />
 );
 
-export default BgLeader;
+export default BgEasy;
+
+

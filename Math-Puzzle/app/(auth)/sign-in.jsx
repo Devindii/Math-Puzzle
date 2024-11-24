@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import { View, Text, ScrollView, Dimensions, Alert, Image,KeyboardAvoidingView, Platform } from "react-native";
 
 import images from "../../constants/images";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-// import { getCurrentUser, signIn } from "../../lib/appwrite";
-// import { useGlobalContext } from "../../context/GlobalProvider";
+
+import { signIn } from "../../services/auth";
 
 const SignIn = () => {
   // const { setUser, setIsLogged } = useGlobalContext();
@@ -19,24 +19,20 @@ const SignIn = () => {
 
   const submit = async () => {
     if (form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill in all fields");
+      return Alert.alert("Error", "Please fill in all fields");
     }
-
-    // setSubmitting(true);
-
-    //   try {
-    //     // await signIn(form.email, form.password);
-    //     // const result = await getCurrentUser();
-    //     // setUser(result);
-    //     // setIsLogged(true);
-
-    // Alert.alert("Success", "User signed in successfully");
-    // router.replace("/home");
-    //   } catch (error) {
-    //     Alert.alert("Error", error.message);
-    //   } finally {
-    //     setSubmitting(false);
-    //   }
+  
+    setSubmitting(true);
+  
+    try {
+      const response = await signIn(form.email, form.password);
+      Alert.alert("Success", "Logged in successfully");
+      router.replace("/home");
+    } catch (error) {
+      Alert.alert("Error", error.message || "Failed to sign in");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

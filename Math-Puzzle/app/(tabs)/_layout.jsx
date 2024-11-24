@@ -11,6 +11,10 @@ const TabsLayout = () => {
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen name="achievements" options={{ headerShown: false }} />
         <Stack.Screen name="leaderboard" options={{ headerShown: false }} />
+        <Stack.Screen name="easyGame" options={{ headerShown: false }} />
+        <Stack.Screen name="normalGame" options={{ headerShown: false }} />
+        <Stack.Screen name="hardGame" options={{ headerShown: false }} />
+      
    
     </Stack>
   )

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
+import { View, Text, ScrollView, Dimensions, Alert, Image,KeyboardAvoidingView, Platform  } from "react-native";
 import  images  from "../../constants/images";
 import  CustomButton from "../../components/CustomButton";
 import FormField  from "../../components/FormField";
-// import { createUser } from "../../lib/appwrite";
-// import { useGlobalContext } from "../../context/GlobalProvider";
+
+import { signUp } from "../../services/auth";
 
 const SignUp = () => {
   // const { setUser, setIsLogged } = useGlobalContext();
@@ -26,11 +25,13 @@ const SignUp = () => {
 
     setSubmitting(true);
     try {
-      // const result = await createUser(form.email, form.password, form.username);
-      // setUser(result);
-      // setIsLogged(true);
-
-      router.replace("/home");
+      const data = await signUp(form.username, form.email, form.password);
+      Alert.alert("Success", "Registered successfully!", [
+        {
+          text: "OK",
+          onPress: () => router.replace("/sign-in"), // Navigate only after clicking OK
+        },
+      ]);
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {

@@ -6,6 +6,7 @@ import images from "../../constants/images";
 import icons from "../../constants/icons";
 import BgHome from "../../components/BgHome";
 import Menu from "../../components/menu";
+import {router} from "expo-router";
 
 const Home = () => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -29,6 +30,7 @@ const Home = () => {
               width: 285,
               height: 90,
             }}
+            onPress={()=> router.push("/easyGame")}
           />
 
           <Button
@@ -55,6 +57,18 @@ const Home = () => {
 
           <Button
             source={icons.menu}
+            style={{
+              position: "absolute",
+              top: 60,
+              left: 20,
+              width: 60,
+              height: 60,
+            }}
+            onPress={toggleMenu}
+          />
+
+<Button
+            source={icons.BackButton}
             style={{
               position: "absolute",
               top: 60,
