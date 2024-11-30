@@ -44,9 +44,12 @@ import No7 from "../assets/images/No7.png";
 import No8 from "../assets/images/No8.png";
 import No9 from "../assets/images/No9.png"; 
 
+import Hard from "../assets/images/Hard.png"; 
+import Hint from "../assets/images/hint.png"; 
+
 export default { bubble, splash, icon, favicon, Login, BgHome, btnEasy, btnHard, btnNormal, LeaderBoard,
     MenuScreen, BtnHome, BtnProfile, BtnInstructions, BtnAchivements,BtnExit, LogoNew, BackButton, Instruction, 
     BtnLeader, Profile,Normal, Easy, profile1, BtnDelete, BtnSignOut, level1, level2, level3, level4, level5, level6,
-    Medal1, Medal2, Medal3, No0, No1, No2, No3, No4, No5, No6, No7, No8, No9
+    Medal1, Medal2, Medal3, No0, No1, No2, No3, No4, No5, No6, No7, No8, No9,Hard, Hint
 
 };

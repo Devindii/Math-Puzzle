@@ -42,6 +42,7 @@ const Home = () => {
               width: 285,
               height: 90,
             }}
+            onPress={()=> router.push("/normalGame")}
           />
 
           <Button
@@ -53,6 +54,7 @@ const Home = () => {
               width: 285,
               height: 90,
             }}
+            onPress={()=> router.push("/hardGame")}
           />
 
           <Button

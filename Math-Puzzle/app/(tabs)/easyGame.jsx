@@ -1,61 +1,165 @@
-import { View, ScrollView, SafeAreaView, Image, Text } from "react-native";
 import React, { useState, useEffect } from "react";
+import { View, ScrollView, SafeAreaView, Image, Text, Alert } from "react-native";
 import Button from "../../components/Button";
 import icons from "../../constants/icons";
 import BgEasy from "../../components/BgEasy";
 import Menu from "../../components/menu";
+import NumberButton from "../../components/NumberButton";
+import { useRouter } from "expo-router";
+import images from "../../constants/images";
 
 const EasyGame = () => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [questionImage, setQuestionImage] = useState(null); // Holds the question image from API
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [triggerMessage, setTriggerMessage] = useState(""); // Holds the trigger message for modal
-  const [answer, setAnswer] = useState(""); // Holds the answer from API
-  const [timer, setTimer] = useState(30); // Timer starts at 30 seconds
-  const [score, setScore] = useState(0); // Initial score
-  const [lives, setLives] = useState(3); // Player starts with 3 lives
-  const [feedbackStatus, setFeedbackStatus] = useState(null); // Feedback status for correct/wrong answer
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-    const [imagePosition, setImagePosition] = useState({
-      top: 230,
-      left: 50,
-      width: 300,
-      height: 250,
-    });
-  
-  };
+  const [questionImage, setQuestionImage] = useState(null);
+  const [answer, setAnswer] = useState("");
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [score, setScore] = useState(0);
+  const [chances, setChances] = useState(6);
+  const [hints, setHints] = useState(3); // State to track available hints
+  const [timerPaused, setTimerPaused] = useState(false);
+  const [scoreChange, setScoreChange] = useState(null); // Track score changes
 
-  // Fetch question and answer from API
+  const router = useRouter();
+
+  const toggleMenu = () => setMenuVisible(!menuVisible);
+
   const fetchNewQuestion = async () => {
     try {
       const response = await fetch("http://marcconrad.com/uob/banana/api.php?out=json");
       const data = await response.json();
-      setQuestionImage(data.question); // Set question image
-      setAnswer(data.solution); // Store the answer (can be used for logic later)
+      setQuestionImage(data.question);
+      setAnswer(data.solution.toString());
     } catch (error) {
       console.error("Error fetching question:", error);
     }
   };
 
   useEffect(() => {
-    fetchNewQuestion(); // Fetch question when component mounts
+    fetchNewQuestion();
   }, []);
+
+  useEffect(() => {
+    if (timeLeft === 0 || chances === 0) {
+        let message = "";
+        if (timeLeft === 0 && chances === 0) {
+            message = "Both time is up and your chances are over!";
+        } else if (timeLeft === 0) {
+            message = "Time is up!";
+        } else if (chances === 0) {
+            message = "Your chances are over!";
+        }
+
+        Alert.alert(
+            "Game Over",
+            `${message}\nYour final score is: ${score}`,
+            [
+                {
+                    text: "OK",
+                    onPress: () => router.replace("/home"),
+                },
+            ]
+        );
+        return;
+    }
+
+    if (!timerPaused) {
+        const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+        return () => clearTimeout(timer);
+    }
+}, [timeLeft, chances, timerPaused]);
+
+
+  const handleNumberPress = (num) => {
+    if (num.toString() === answer) {
+      setScore((prev) => prev + 5);
+      setScoreChange({ value: "+5", color: "yellow" }); // Set positive change
+      fetchNewQuestion();
+    } else {
+      setScore((prev) => Math.max(0, prev - 5));
+      setChances((prev) => prev - 1);
+      setScoreChange({ value: "-5", color: "red" }); // Set negative change
+    }
+
+    // Reset scoreChange after 5 seconds
+    setTimeout(() => setScoreChange(null), 1000);
+  };
+
+  const showHint = () => {
+    if (hints > 0) {
+      setTimerPaused(true);
+      Alert.alert(
+        "Hint",
+        `The answer starts with: ${answer.charAt(0)}`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              setHints((prev) => prev - 1); // Decrease hints
+              setTimerPaused(false);
+            },
+          },
+        ]
+      );
+    } else {
+      Alert.alert("No Hints Left", "You have used all your hints.");
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")} min`;
+  };
 
   return (
     <SafeAreaView className="bg-purple h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <View className="w-full flex justify-center items-center h-full px-4">
+        <View className="w-full flex justify-center items-center h-full px-4" style={{ position: "relative" }}>
           <BgEasy />
 
-          {/* Display the question image */}
+          <Text
+            style={{
+              color: timeLeft <= 20 ? "red" : "white",
+              fontSize: 24,
+              position: "absolute",
+              top: 177,
+              left: 115,
+            }}
+          >
+            {formatTime(timeLeft)}
+          </Text>
+
+          <Text style={{ color: "white", fontSize: 27, position: "absolute", top: 177, right: 70 }}>
+            {score}
+          </Text>
+
+          {scoreChange && (
+            <Text
+              style={{
+                color: scoreChange.color,
+                fontSize: 40,
+                position: "absolute",
+                top: 130, // Position slightly below the score
+                right: 85,
+              }}
+            >
+              {scoreChange.value}
+            </Text>
+          )}
+
+          <Text style={{ color: "white", fontSize: 28, position: "absolute", top: 85, right: 60 }}>
+            {chances}
+          </Text>
+
           {questionImage ? (
             <Image
               source={{ uri: questionImage }}
               style={{
-                width: 200, // Adjust the size as needed
-                height: 200,
-                marginBottom: 20,
+                position: "absolute",
+                top: 230,
+                left: 18,
+                width: 360,
+                height: 400,
               }}
               resizeMode="contain"
             />
@@ -63,7 +167,18 @@ const EasyGame = () => {
             <Text style={{ color: "white", marginBottom: 20 }}>Loading Question...</Text>
           )}
 
-          {/* Menu Button */}
+          {[...Array(10).keys()].map((num) => (
+            <NumberButton
+              key={num}
+              value={num}
+              onPress={handleNumberPress}
+              position={{
+                top: 575 + Math.floor(num / 5) * 85,
+                left: 28 + (num % 5) * 70,
+              }}
+            />
+          ))}
+
           <Button
             source={icons.menu}
             style={{
@@ -78,15 +193,20 @@ const EasyGame = () => {
 
           {menuVisible && <Menu onClose={toggleMenu} />}
 
-          {/* Fetch New Question Button */}
+          <Text style={{ color: "white", fontSize: 24, position: "absolute", top: 760, right: 90 }}>
+            Hints: {hints}
+          </Text>
+
           <Button
-            source={icons.refresh} // Assuming you have a refresh icon
+            source={images.Hint}
             style={{
-              width: 80,
-              height: 80,
-              marginTop: 20,
+              position: "absolute",
+              top: 730,
+              right: 30,
+              width: 60,
+              height: 60,
             }}
-            onPress={fetchNewQuestion}
+            onPress={showHint}
           />
         </View>
       </ScrollView>
