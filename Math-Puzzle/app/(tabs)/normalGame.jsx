@@ -7,6 +7,7 @@ import Menu from "../../components/menu";
 import NumberButton from "../../components/NumberButton";
 import { useRouter } from "expo-router";
 import images from "../../constants/images";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NormalGame = () => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -59,6 +60,7 @@ const NormalGame = () => {
                 },
             ]
         );
+        handleSaveHighScore();
         return;
     }
 
@@ -111,6 +113,38 @@ const NormalGame = () => {
     return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")} min`;
   };
 
+  // Function to save the high score and update the backend
+  const handleSaveHighScore = async () => {
+    try {
+      const token = await AsyncStorage.getItem('jwtToken'); // Retrieve JWT from AsyncStorage
+      if (!token) {
+        console.log("No token found, can't update high score.");
+        return;
+      }
+
+      console.log("Sending high score update request...");
+      const response = await fetch("http://192.168.8.104:5000/api/auth/update-high-score", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ score: score }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("High score updated successfully:", data);
+        // Update the local AsyncStorage high score
+        await AsyncStorage.setItem('highScore', score.toString());
+      } else {
+        console.log("Failed to update high score:", data.message);
+      }
+    } catch (error) {
+      console.error("Error updating high score:", error);
+    }
+  };
+  
   return (
     <SafeAreaView className="bg-purple h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>

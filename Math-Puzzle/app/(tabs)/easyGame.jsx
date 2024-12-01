@@ -7,6 +7,7 @@ import Menu from "../../components/menu";
 import NumberButton from "../../components/NumberButton";
 import { useRouter } from "expo-router";
 import images from "../../constants/images";
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 const EasyGame = () => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -15,9 +16,9 @@ const EasyGame = () => {
   const [timeLeft, setTimeLeft] = useState(120);
   const [score, setScore] = useState(0);
   const [chances, setChances] = useState(6);
-  const [hints, setHints] = useState(3); // State to track available hints
+  const [hints, setHints] = useState(3); 
   const [timerPaused, setTimerPaused] = useState(false);
-  const [scoreChange, setScoreChange] = useState(null); // Track score changes
+  const [scoreChange, setScoreChange] = useState(null); 
 
   const router = useRouter();
 
@@ -49,16 +50,18 @@ const EasyGame = () => {
             message = "Your chances are over!";
         }
 
+
         Alert.alert(
             "Game Over",
             `${message}\nYour final score is: ${score}`,
             [
                 {
                     text: "OK",
-                    onPress: () => router.replace("/home"),
-                },
+                    onPress: () => router.replace("/home"), 
+                }, 
             ]
         );
+        handleSaveHighScore();
         return;
     }
 
@@ -66,18 +69,17 @@ const EasyGame = () => {
         const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
         return () => clearTimeout(timer);
     }
-}, [timeLeft, chances, timerPaused]);
-
+  }, [timeLeft, chances, timerPaused, score]);
 
   const handleNumberPress = (num) => {
     if (num.toString() === answer) {
       setScore((prev) => prev + 5);
-      setScoreChange({ value: "+5", color: "yellow" }); // Set positive change
+      setScoreChange({ value: "+5", color: "yellow" }); 
       fetchNewQuestion();
     } else {
       setScore((prev) => Math.max(0, prev - 5));
       setChances((prev) => prev - 1);
-      setScoreChange({ value: "-5", color: "red" }); // Set negative change
+      setScoreChange({ value: "-5", color: "red" }); 
     }
 
     // Reset scoreChange after 5 seconds
@@ -94,7 +96,7 @@ const EasyGame = () => {
           {
             text: "OK",
             onPress: () => {
-              setHints((prev) => prev - 1); // Decrease hints
+              setHints((prev) => prev - 1); 
               setTimerPaused(false);
             },
           },
@@ -109,6 +111,38 @@ const EasyGame = () => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")} min`;
+  };
+
+  // Function to save the high score and update the backend
+  const handleSaveHighScore = async () => {
+    try {
+      const token = await AsyncStorage.getItem('jwtToken'); // Retrieve JWT from AsyncStorage
+      if (!token) {
+        console.log("No token found, can't update high score.");
+        return;
+      }
+
+      console.log("Sending high score update request...");
+      const response = await fetch("http://192.168.8.104:5000/api/auth/update-high-score", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ score: score }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("High score updated successfully:", data);
+        // Update the local AsyncStorage high score
+        await AsyncStorage.setItem('highScore', score.toString());
+      } else {
+        console.log("Failed to update high score:", data.message);
+      }
+    } catch (error) {
+      console.error("Error updating high score:", error);
+    }
   };
 
   return (
@@ -139,7 +173,7 @@ const EasyGame = () => {
                 color: scoreChange.color,
                 fontSize: 40,
                 position: "absolute",
-                top: 130, // Position slightly below the score
+                top: 130, 
                 right: 85,
               }}
             >
