@@ -1,28 +1,52 @@
-import React, { useState } from "react";
-import { View, ScrollView, SafeAreaView, Image, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, ScrollView, SafeAreaView, Image, Text, StyleSheet, Alert } from "react-native";
 import Button from "../../components/Button";
 import icons from "../../constants/icons";
 import BgLeader from "../../components/BgLeader";
 import Menu from "../../components/menu";
 import images from "../../constants/images";
 
+const baseUrl = "http://192.168.8.104:5000/profilePic";
+
 const Leaderboard = () => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [leaderboardData, setLeaderboardData] = useState([]);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await fetch("http://192.168.8.104:5000/api/auth/leaderboard");
+        const players = await response.json();
+
+        const formattedData = players.map((player, index) => ({
+          rank: index + 1,
+          player: {
+            image: {
+              uri: player.profileImage
+                ? `${baseUrl}/${player.profileImage}`
+                : `${baseUrl}/profile.png`,
+            },
+            name: player.username,
+          },
+          score: player.highScore,
+        }));
+
+        setLeaderboardData(formattedData);
+      } catch (error) {
+        console.error(error);
+        Alert.alert("Error", "Failed to fetch leaderboard data.");
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
+
+  // Top 3 players
+  const topPlayers = leaderboardData.slice(0, 3);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
-
-  // Sample data for leaderboard
-  const leaderboardData = [
-    { rank: 1, name: "Davis Curtis", score: "10", image: images.profile1, medal: images.Medal1 },
-    { rank: 2, name: "Emily Brown", score: "15", image: images.profile1, medal: images.Medal2 },
-    { rank: 3, name: "Chris Taylor", score: "20", image: images.profile1, medal: images.Medal3 },
-    { rank: 4, name: "Anna Smith", score: "25", image: images.profile1 },
-    { rank: 5, name: "John Doe", score: "30", image: images.profile1 },
-    { rank: 6, name: "Devii", score: "100", image: images.profile1 },
-    // Add more players as needed
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -32,64 +56,31 @@ const Leaderboard = () => {
 
           {/* 1st Place */}
           <Image
-            source={images.profile1}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 100,
-              borderWidth: 1,
-              borderColor: "white",
-              position: "absolute",
-              top: 190,
-              left: 150,
-            }}
+            source={topPlayers[0]?.player.image || images.profile1}
+            style={styles.topPlayerImage(150, 190)}
           />
 
           {/* 2nd Place */}
           <Image
-            source={images.profile1}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 100,
-              borderWidth: 1,
-              borderColor: "white",
-              position: "absolute",
-              top: 290,
-              left: 20,
-            }}
+            source={topPlayers[1]?.player.image || images.profile1}
+            style={styles.topPlayerImage(270, 290)}
           />
 
           {/* 3rd Place */}
           <Image
-            source={images.profile1}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 100,
-              borderWidth: 1,
-              borderColor: "white",
-              position: "absolute",
-              top: 290,
-              right: 20,
-            }}
+            source={topPlayers[2]?.player.image || images.profile1}
+            style={styles.topPlayerImage(20, 290, true)}
           />
 
           {/* Menu Button */}
           <Button
             source={icons.menu}
-            style={{
-              position: "absolute",
-              top: 50,
-              left: 10,
-              width: 60,
-              height: 60,
-            }}
+            style={styles.menuButton}
             onPress={toggleMenu}
           />
 
-          {/* Scrollable Leaderboard */}
-          <View style={[styles.leaderboardContainer, { top: 460, left: 30 }]}>
+          {/* Scrollable Leaderboard Table */}
+          <View style={styles.leaderboardContainer}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
               {leaderboardData.map((player, index) => (
                 <View style={styles.playerCard} key={player.rank}>
@@ -100,19 +91,21 @@ const Leaderboard = () => {
 
                   {/* Profile Image */}
                   <Image
-                    source={player.image}
+                    source={player.player.image}
                     style={styles.profileImage}
                     defaultSource={images.profile} // Default profile image
                   />
 
                   {/* Name and Score */}
                   <View style={styles.detailsContainer}>
-                    <Text style={styles.playerName}>{player.name}</Text>
+                    <Text style={styles.playerName}>{player.player.name}</Text>
                     <Text style={styles.playerScore}>{player.score}</Text>
                   </View>
 
                   {/* Medal (if applicable for top 3) */}
-                  {player.rank <= 3 && <Image source={player.medal} style={styles.medalIcon} />}
+                  {player.rank === 1 && <Image source={images.Medal1} style={styles.medalIcon} />}
+                  {player.rank === 2 && <Image source={images.Medal2} style={styles.medalIcon} />}
+                  {player.rank === 3 && <Image source={images.Medal3} style={styles.medalIcon} />}
                 </View>
               ))}
             </ScrollView>
@@ -139,15 +132,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#8b5cf6", // Purple background
   },
+  topPlayerImage: (left, top, right = false) => ({
+    width: 100,
+    height: 100,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: "white",
+    position: "absolute",
+    top,
+    left,
+    right: right ? 20 : undefined,
+  }),
+  menuButton: {
+    position: "absolute",
+    top: 50,
+    left: 10,
+    width: 60,
+    height: 60,
+  },
   leaderboardContainer: {
     position: "absolute",
     width: "85%",
-    height: "35%",
+    height: "40%",  // Adjust the height
+    top: 480,  // Move it further down
+    left: 30,  // Move it a little from the left
     borderRadius: 15,
     shadowOpacity: 0.1,
     shadowRadius: 2,
-   
   },
+  
   scrollContent: {},
   playerCard: {
     flexDirection: "row",
@@ -156,7 +169,6 @@ const styles = StyleSheet.create({
     borderRadius: 15, // Corner curve
     padding: 10,
     marginBottom: 8,
-    
   },
   rankCircle: {
     width: 40,

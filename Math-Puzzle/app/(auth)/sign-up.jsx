@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image,KeyboardAvoidingView, Platform  } from "react-native";
+import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
 import  images  from "../../constants/images";
 import  CustomButton from "../../components/CustomButton";
 import FormField  from "../../components/FormField";
@@ -9,8 +9,6 @@ import FormField  from "../../components/FormField";
 import { signUp } from "../../services/auth";
 
 const SignUp = () => {
-  // const { setUser, setIsLogged } = useGlobalContext();
-
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     username: "",
@@ -19,10 +17,41 @@ const SignUp = () => {
   });
 
   const submit = async () => {
+    // Check for empty fields
     if (form.username === "" || form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
+      return;
     }
-
+  
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+  
+    // Validate password strength
+    const passwordMinLength = 6;
+    if (form.password.length < passwordMinLength) {
+      Alert.alert(
+        "Error",
+        `Password must be at least ${passwordMinLength} characters long`
+      );
+      return;
+    }
+  
+    // Additional password validation: contains a number and special character
+    const numberRegex = /[0-9]/;
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    if (!numberRegex.test(form.password) || !specialCharRegex.test(form.password)) {
+      Alert.alert(
+        "Error",
+        "Password must include at least one number and one special character"
+      );
+      return;
+    }
+  
+    // Proceed with signup if validation passes
     setSubmitting(true);
     try {
       const data = await signUp(form.username, form.email, form.password);

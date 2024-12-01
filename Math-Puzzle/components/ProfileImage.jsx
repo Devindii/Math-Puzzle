@@ -1,24 +1,28 @@
 import { Image, TouchableOpacity } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import icons from "../constants/icons";
 
 const ProfileImage = ({ profileImage, setProfileImage }) => {
   const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
-      alert("Permission to access camera roll is required!");
-      return;
-    }
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        alert("Permission to access the camera roll is required!");
+        return;
+      }
 
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
 
-    if (!pickerResult.canceled) {
-      setProfileImage({ uri: pickerResult.assets[0].uri });
+      if (!pickerResult.canceled && pickerResult.assets?.[0]?.uri) {
+        setProfileImage({ uri: pickerResult.assets[0].uri }); // Set new image
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
     }
   };
 
@@ -26,7 +30,9 @@ const ProfileImage = ({ profileImage, setProfileImage }) => {
     <>
       {/* Profile Image */}
       <Image
-        source={profileImage}
+        source={{
+          uri: profileImage?.uri || "http://192.168.8.104:5000/profilePic/profile.png", // Default fallback
+        }}
         style={{
           width: 100,
           height: 100,
@@ -37,22 +43,25 @@ const ProfileImage = ({ profileImage, setProfileImage }) => {
           left: 0,
         }}
       />
-      
+
       {/* Plus Icon to pick image */}
-      <TouchableOpacity onPress={pickImage} style={{
-        width: 30,
-        height: 30, 
-        top: -650,
-        left: 35,
-        justifyContent: "center",
-        alignItems: "center",
-      }}>
+      <TouchableOpacity
+        onPress={pickImage}
+        style={{
+          width: 30,
+          height: 30,
+          top: -650,
+          left: 35,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Image
           source={icons.plus}
           style={{
             width: 30,
             height: 30,
-            borderRadius:100,
+            borderRadius: 100,
           }}
         />
       </TouchableOpacity>

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image,KeyboardAvoidingView, Platform } from "react-native";
-
+import { View, Text, ScrollView, Dimensions, Alert, Image} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import images from "../../constants/images";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
@@ -26,8 +26,14 @@ const SignIn = () => {
   
     try {
       const response = await signIn(form.email, form.password);
-      Alert.alert("Success", "Logged in successfully");
-      router.replace("/home");
+      await AsyncStorage.setItem("token", response.token); // Save token to AsyncStorage
+      
+      Alert.alert("Success", "Logged in successfully!", [
+        {
+          text: "OK",
+          onPress: () => router.replace("/home"), // Navigate only after clicking OK
+        },
+      ]);
     } catch (error) {
       Alert.alert("Error", error.message || "Failed to sign in");
     } finally {

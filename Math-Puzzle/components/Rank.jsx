@@ -6,7 +6,7 @@ const Rank = ({ rank }) => {
     <Text
       className="text-white font-pbold text-4xl absolute"
       style={{
-        top: 330,
+        top: 380,
         left: 70,
         width: 100,
         textAlign: "center",

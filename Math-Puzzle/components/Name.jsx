@@ -6,7 +6,7 @@ const Name = ({ name }) => {
     <Text
       className="text-white font-pbold text-3xl absolute"
       style={{
-        top: 230,
+        top: 280,
         left: 70,
         width: 300,
         textAlign: "center",
