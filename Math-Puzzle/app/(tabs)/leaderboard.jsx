@@ -11,6 +11,7 @@ const baseUrl = "http://192.168.8.104:5000/profilePic";
 const Leaderboard = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState([]);
+  const [currentDateTime, setCurrentDateTime] = useState("");
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -39,14 +40,26 @@ const Leaderboard = () => {
     };
 
     fetchLeaderboard();
-  }, []);
 
-  // Top 3 players
-  const topPlayers = leaderboardData.slice(0, 3);
+    // Update date and time
+    const updateDateTime = () => {
+      const now = new Date();
+      const formattedDateTime = now.toLocaleString(); // Format: MM/DD/YYYY, HH:MM:SS
+      setCurrentDateTime(formattedDateTime);
+    };
+
+    updateDateTime();
+    const intervalId = setInterval(updateDateTime, 1000); // Update every second
+
+    return () => clearInterval(intervalId); // Clean up the interval
+  }, []);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
+
+  // Top 3 players
+  const topPlayers = leaderboardData.slice(0, 3);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -117,6 +130,11 @@ const Leaderboard = () => {
               <Menu onClose={toggleMenu} />
             </View>
           )}
+
+          {/* Date and Time */}
+          <View style={styles.dateTimeContainer}>
+            <Text style={styles.dateTimeText}>{currentDateTime}</Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -153,28 +171,27 @@ const styles = StyleSheet.create({
   leaderboardContainer: {
     position: "absolute",
     width: "85%",
-    height: "40%",  // Adjust the height
-    top: 480,  // Move it further down
-    left: 30,  // Move it a little from the left
+    height: "40%",
+    top: 480,
+    left: 30,
     borderRadius: 15,
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
-  
   scrollContent: {},
   playerCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF", // White background for each card
-    borderRadius: 15, // Corner curve
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
     padding: 10,
     marginBottom: 8,
   },
   rankCircle: {
     width: 40,
     height: 40,
-    borderRadius: 20, // Circle
-    backgroundColor: "#F1C40F", // Yellow for rank circle
+    borderRadius: 20,
+    backgroundColor: "#F1C40F",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 16,
@@ -182,12 +199,12 @@ const styles = StyleSheet.create({
   rankText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#FFFFFF", // White text inside the circle
+    color: "#FFFFFF",
   },
   profileImage: {
     width: 50,
     height: 50,
-    borderRadius: 25, // Circle profile picture
+    borderRadius: 25,
     marginRight: 16,
   },
   detailsContainer: {
@@ -213,8 +230,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
-    zIndex: 10, // Ensure it appears above everything
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 10,
+  },
+  dateTimeContainer: {
+    position: "absolute",
+    top: 60,
+    right: 40,
+  },
+  dateTimeText: {
+    fontSize: 14,
+    color: "#000000",
+    fontWeight: "bold",
   },
 });
 
